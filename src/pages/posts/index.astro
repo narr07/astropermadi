@@ -1,0 +1,27 @@
+---
+import { client } from '../../../tina/__generated__/client.ts'
+import Layout from '../../layouts/Layout.astro'
+
+// Mengambil semua post
+const response = await client.queries.postConnection()
+const posts = response.data.postConnection.edges
+---
+
+<Layout>
+  <main>
+    <!-- Konten halaman -->
+    <h1>Daftar Postingan</h1>
+    <ul>
+      {
+        posts.map(({ node }) => (
+          <li key={node._sys.filename}>
+            <a href={`/posts/${node._sys.filename}`}>
+              <h1 class="text-red-500 text-3xl font-bold">{node.title}</h1>
+            </a>
+            <p>Diposting pada: {new Date(node.posted).toLocaleDateString()}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Layout>

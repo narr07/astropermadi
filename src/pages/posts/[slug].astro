@@ -1,0 +1,22 @@
+---
+import { client } from '../../../tina/__generated__/client.ts'
+import { MyComponent } from '../../components/react'
+import Layout from '../../layouts/Layout.astro'
+
+export async function getStaticPaths() {
+  // Mengambil semua post untuk menghasilkan jalur dinamis
+  const response = await client.queries.postConnection()
+  const posts = response.data.postConnection.edges
+
+  return posts.map(({ node }) => ({
+    params: { slug: node._sys.filename },
+  }))
+}
+
+const { slug } = Astro.params
+const response = await client.queries.post({ relativePath: `${slug}.md` })
+---
+
+<Layout>
+  <MyComponent client:tina {...response} />
+</Layout>
